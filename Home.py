@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="量化旗艦指揮中心", page_icon="🏰", layout="centered")
+st.set_page_config(page_title="贏家思維與風控", page_icon="🏰", layout="centered")
 
 st.markdown("""
     <div style='text-align: center; padding: 50px;'>
@@ -9,3 +9,4 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
