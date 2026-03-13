@@ -475,7 +475,7 @@ def main():
                         else:
                             rr_icon, rr_bg, rr_border, rr_text, rr_action = "📉", "#FEF2F2", "#FECACA", "#DC2626", "📉 下跌測底中：退守甜甜價等紅K"
                     else:
-                        rr_icon, rr_bg, rr_border, rr_text, rr_action = "🚨", "#FEF2F2", "#FECACA", "#DC2626", "🛑 乖離極大：強烈建議觀望"
+                        rr_icon, rr_bg, rr_border, rr_text, rr_action = "🚨", "#FEF2F2", "#FECACA", "#DC2626", "🛑 乖極大：強烈建議觀望"
 
                     with cols_tw[i % 3]:
                         # --- 改良版 HTML 結構 (支援 RWD 網格) ---
@@ -563,10 +563,16 @@ def main():
                 st.dataframe(df_all.sort_values("prob_val", ascending=False), use_container_width=True, hide_index=True)
 
             st.sidebar.divider()
+            
+            # === 修復版：戰術診斷 ===
             st.sidebar.markdown("### 🔍 戰術診斷")
-            diag_sid = st.sidebar.selectbox("從清單選擇標的", watchlist['代碼'].tolist())
+            # 強制將下拉選單裡的代碼全部轉為字串
+            diag_sid = st.sidebar.selectbox("從清單選擇標的", watchlist['代碼'].astype(str).tolist())
+            
             if st.sidebar.button("診斷未入選原因", use_container_width=True):
-                target = next((item for item in all_res if item["代碼"] == diag_sid), None)
+                # 比對時，強制雙方都用字串格式進行比對，消除型別錯亂
+                target = next((item for item in all_res if str(item["代碼"]).strip() == str(diag_sid).strip()), None)
+                
                 if target:
                     threshold = tw_top5.iloc[-1] if not target['is_us'] else us_top5.iloc[-1]
                     st.sidebar.info(f"**診斷報告：{target['名稱']}**")
@@ -582,6 +588,9 @@ def main():
                         st.sidebar.warning(f"【空間不足】\n● 漲幅空間 (+{target['gain_val']}%) 低於先鋒門檻")
                     else:
                         st.sidebar.success("該標的數據已達標。")
+                else:
+                    st.sidebar.error("⚠️ 系統無法在目前的巡檢結果中找到該標的，請確認是否已完成同步。")
+
     else:
         st.info("💡 指揮部提醒：請先在左側輸入代碼並『加入監控清單』以啟動全球巡檢。")
 
