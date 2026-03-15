@@ -153,8 +153,20 @@ def main():
 
     # 側邊欄設定
     st.sidebar.markdown("### 🔑 系統授權")
-    api_key = st.sidebar.text_input("請輸入 Gemini API Key", type="password", help="您的金鑰僅會在本次對話中使用，不會儲存於伺服器。")
+    
+    # 🌟 新增：取得金鑰的超連結
+    st.sidebar.markdown("[🔗 點此免費取得 Gemini API Key](https://aistudio.google.com/app/apikey)")
+    
+    # 🌟 新增：自動讀取雲端 Secrets 機制
+    default_api_key = ""
+    # 嘗試從 Streamlit Secrets 中讀取，如果有就自動填入
+    if "GEMINI_API_KEY" in st.secrets:
+        default_api_key = st.secrets["GEMINI_API_KEY"]
+
+    # 輸入框預設值改為 default_api_key
+    api_key = st.sidebar.text_input("請輸入或確認 Gemini API Key", type="password", value=default_api_key, help="若您已在雲端後台設定 Secrets，此處將自動填入。")
     st.sidebar.markdown("---")
+    
     st.sidebar.markdown("### 🎯 目標鎖定")
     col1, col2 = st.sidebar.columns(2)
     with col1:
